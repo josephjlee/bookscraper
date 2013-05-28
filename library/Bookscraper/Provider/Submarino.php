@@ -15,17 +15,24 @@ class Submarino extends ProviderAbstract
         $content = '';
         $crawler = $this->_createCrawler($uri, $content);
         $result = new \Bookscraper\Search\Result();
-        $errorMessage = 'Desculpe, no momento não temos  esse produto';
+        $errorMessages = array(
+            'Desculpe, no momento não temos  esse produto',
+            'não encontrou nenhum resultado',
+        );
 
-        if (strpos($content, $errorMessage) === false) {
-            $url = $crawler->filter('.list .url')->link()->getUri();
-            $crawler = $this->_createCrawler($url, $content);
-            $priceText = $crawler->filter('strong .amount')->text();
-            $price = $this->_parsePrice($priceText);
-
-            $result->setPrice($price)
-                   ->setUrl($url);
+        foreach ($errorMessages as $errorMessage) {
+            if (strpos($content, $errorMessage) !== false) {
+                return $result;
+            }
         }
+
+        $url = $crawler->filter('.list .url')->link()->getUri();
+        $crawler = $this->_createCrawler($url, $content);
+        $priceText = $crawler->filter('strong .amount')->text();
+        $price = $this->_parsePrice($priceText);
+
+        $result->setPrice($price)
+               ->setUrl($url);
 
         return $result;
     }

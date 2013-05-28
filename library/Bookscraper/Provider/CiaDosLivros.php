@@ -45,7 +45,7 @@ class CiaDosLivros extends ProviderAbstract
         }
 
         $priceText = $crawler->filter('.sale')->text();
-        $price = $this->_parsePrice($priceText, 'R$');
+        $price = $this->_parsePrice($priceText);
 
         $result->setPrice($price)
                ->setUrl($url);

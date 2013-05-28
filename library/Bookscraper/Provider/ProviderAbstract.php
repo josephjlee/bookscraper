@@ -7,16 +7,18 @@ abstract class ProviderAbstract implements ProviderInterface
     /**
      * @param  string $uri
      * @param  string|null $content
+     * @param   array $extraOptions Dz_Http_Client extra options.
      * @return \Symfony\Component\DomCrawler\Crawler
      */
-    protected function _createCrawler($uri, &$contentReference = null)
-    {
+    protected function _createCrawler(
+        $uri, &$contentReference = null, array $extraOptions = array()
+    ) {
         /**
          * @see \Dz_Http_Client
          */
         require_once __DIR__ . '/../../Dz/Http/Client.php';
 
-        $content = \Dz_Http_Client::getData($uri);
+        $content = \Dz_Http_Client::getData($uri, $extraOptions);
         $crawler = new \Symfony\Component\DomCrawler\Crawler(null, $uri);
 
         $crawler->addContent($content, 'text/html');
@@ -30,20 +32,13 @@ abstract class ProviderAbstract implements ProviderInterface
 
     /**
      * @param  string $priceText
-     * @param  string $prefix
      * @return float
      */
-    protected function _parsePrice($priceText, $prefix = null)
+    protected function _parsePrice($priceText)
     {
-        if ($prefix !== null) {
-            $prefix .= ' ';
-            $priceText = str_replace($prefix, '', $priceText);
-        }
+        $price = preg_replace('/^\D*(\d+)[\.,](\d+)$/', '$1.$2', $priceText);
 
-        $priceText = str_replace('.', '', $priceText);
-        $priceText = str_replace(',', '.', $priceText);
-
-        return (float) $priceText;
+        return (float) $price;
     }
 
     /**

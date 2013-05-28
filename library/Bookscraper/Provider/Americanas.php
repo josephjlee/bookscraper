@@ -26,17 +26,24 @@ class Americanas extends ProviderAbstract
         $content = '';
         $crawler = $this->_createCrawler($uri, $content);
         $result = new \Bookscraper\Search\Result();
-        $errorMessage = 'Nenhum resultado encontrado para sua consulta';
+        $errorMessages = array(
+            'Nenhum resultado encontrado para sua consulta',
+            'não retornou nenhum resultado',
+        );
 
-        if (strpos($content, $errorMessage) === false) {
-            $url = $crawler->filter('.list .url')->link()->getUri();
-            $crawler = $this->_createCrawler($url, $content);
-            $priceText = $crawler->filter('strong .price')->text();
-            $price = $this->_parsePrice($priceText, 'R$');
-
-            $result->setPrice($price)
-                   ->setUrl($url);
+        foreach ($errorMessages as $errorMessage) {
+            if (strpos($content, $errorMessage) !== false) {
+                return $result;
+            }
         }
+
+        $url = $crawler->filter('.list .url')->link()->getUri();
+        $crawler = $this->_createCrawler($url, $content);
+        $priceText = $crawler->filter('strong .price')->text();
+        $price = $this->_parsePrice($priceText);
+
+        $result->setPrice($price)
+               ->setUrl($url);
 
         return $result;
     }

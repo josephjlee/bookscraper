@@ -27,6 +27,9 @@ $providers = array(
     new \Bookscraper\Provider\Americanas(),
     new \Bookscraper\Provider\CiaDosLivros(),
     new \Bookscraper\Provider\Fnac(),
+    new \Bookscraper\Provider\LivrariaDaFolha(),
+    new \Bookscraper\Provider\Lpm(),
+    new \Bookscraper\Provider\Saraiva(),
     new \Bookscraper\Provider\Submarino(),
 );
 
@@ -60,6 +63,9 @@ $providers = array(
     new \Bookscraper\Provider\Americanas(),
     new \Bookscraper\Provider\CiaDosLivros(),
     new \Bookscraper\Provider\Fnac(),
+    new \Bookscraper\Provider\LivrariaDaFolha(),
+    new \Bookscraper\Provider\Lpm(),
+    new \Bookscraper\Provider\Saraiva(),
     new \Bookscraper\Provider\Submarino(),
 );
 
