@@ -1,5 +1,6 @@
 {
     "require": {
+        "dzestudio/dz-framework": "dev-master",
         "symfony/dom-crawler": "~2.0",
         "symfony/css-selector": "~2.0"
     },

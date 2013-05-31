@@ -1,7 +1,7 @@
 Bookscraper, PHP web scraper to find cheap books. 
 =================================================
 
-Bookscraper is a little PHP experiment to grab cheap books by searching some brazilian bookstores. It uses [Composer](http://getcomposer.org/), Symfony [DomCrawler](https://github.com/symfony/DomCrawler) and [CssSelector](https://github.com/symfony/CssSelector) components and an HTTP client class developed by [DZ Estudio](https://github.com/dzestudio) and allows the use of custom search providers.
+Bookscraper is a little PHP experiment to grab cheap books by searching some brazilian bookstores. It uses [Composer](http://getcomposer.org/), Symfony [DomCrawler](https://github.com/symfony/DomCrawler) and [CssSelector](https://github.com/symfony/CssSelector) components and [DZ Framework](https://github.com/dzestudio/dz-framework) HTTP client and allows the use of custom search providers.
 
 Installation
 ------------

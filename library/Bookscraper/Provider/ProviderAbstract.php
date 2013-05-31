@@ -13,12 +13,7 @@ abstract class ProviderAbstract implements ProviderInterface
     protected function _createCrawler(
         $uri, &$contentReference = null, array $extraOptions = array()
     ) {
-        /**
-         * @see \Dz_Http_Client
-         */
-        require_once __DIR__ . '/../../Dz/Http/Client.php';
-
-        $content = \Dz_Http_Client::getData($uri, $extraOptions);
+        $content = \Dz\Http\Client::getData($uri, $extraOptions);
         $crawler = new \Symfony\Component\DomCrawler\Crawler(null, $uri);
 
         $crawler->addContent($content, 'text/html');
