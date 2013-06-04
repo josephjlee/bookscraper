@@ -12,11 +12,6 @@ class Search
     protected $_author;
 
     /**
-     * @var array
-     */
-    protected $_providers = array();
-
-    /**
      * Book title.
      *
      * @var string
@@ -26,13 +21,12 @@ class Search
     /**
      * @param string $title
      * @param string $author
-     * @param array $providers
+
      */
-    public function __construct($title, $author = null, array $providers)
+    public function __construct($title, $author = null)
     {
         $this->_title = $title;
         $this->_author = $author;
-        $this->_providers = $providers;
     }
 
     /**
@@ -56,17 +50,16 @@ class Search
     }
 
     /**
-     * @param  $providers
+     * @param  array $providers
      * @return \Bookscraper\Search\ResultBundle
      */
-    public function lookup()
+    public function lookup(array $providers)
     {
         $resultBundle = new \Bookscraper\Search\ResultBundle($this);
 
-        foreach ($this->_providers as $provider) {
+        foreach ($providers as $provider) {
             /* @var $provider \Bookscraper\Provider\ProviderInterface */
-            $result = $provider->lookup($this)
-                               ->setProvider($provider);
+            $result = $provider->lookup($this);
 
             $resultBundle->addResult($result);
         }

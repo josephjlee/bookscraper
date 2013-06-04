@@ -7,6 +7,11 @@ class SearchBundle
     /**
      * @var array
      */
+    protected $_providers = array();
+
+    /**
+     * @var array
+     */
     protected $_searchs = array();
 
     /**
@@ -15,14 +20,15 @@ class SearchBundle
      */
     public function __construct(array $titles, array $providers)
     {
-        $this->_buildSearches($titles, $providers);
+        $this->_buildSearches($titles);
+
+        $this->_providers = $providers;
     }
 
     /**
      * @param array $titles
-     * @param array $providers
      */
-    protected function _buildSearches(array $titles, array $providers)
+    protected function _buildSearches(array $titles)
     {
         foreach ($titles as $title) {
             if (!is_array($title)) {
@@ -30,7 +36,7 @@ class SearchBundle
             }
 
             $this->_searchs[] = new \Bookscraper\Search\Search(
-                array_shift($title), array_shift($title), $providers);
+                array_shift($title), array_shift($title));
         }
     }
 
@@ -43,7 +49,7 @@ class SearchBundle
 
         foreach ($this->_searchs as $search) {
             /* @var $search \Bookscraper\Search\Search */
-            $resultBundles[] = $search->lookup();
+            $resultBundles[] = $search->lookup($this->_providers);
         }
 
         return $resultBundles;

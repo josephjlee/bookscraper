@@ -16,7 +16,31 @@ $ php composer.phar install
 Usage
 -----
 
-To search a single title, use `Bookscraper\Search\Search`:
+There is three basic ways to search books with Bookscraper.
+
+### Single title, single provider
+
+``` php
+<?php
+
+require_once 'vendor/autoload.php';
+
+$title = 'Lolita';
+$author = 'Vladimir Nabokov';
+$search = new \Bookscraper\Search\Search($title, $author);
+$provider = new \Bookscraper\Provider\LivrariaCultura();
+$result = $provider->lookup($search);
+
+if ($result === null) {
+    printf('"%s" could not be found on provider.', $title);
+} else {
+    printf('"%s" can be found on %s (%s) for R$ %01.2f.',
+    $title, $result->getProvider()->getName(),
+    $result->getUrl(), $result->getPrice());
+}
+```
+
+### Single title, multiple providers
 
 ``` php
 <?php
@@ -34,21 +58,21 @@ $providers = array(
     new \Bookscraper\Provider\Submarino(),
 );
 
-$title = 'A Ausência que Seremos';
-$author = 'Héctor Abad';
-$search = new \Bookscraper\Search\Search($title, $author, $providers);
-$resultBundle = $search->lookup();
+$title = 'A Ilha do Dia Anterior';
+$author = 'Umberto Eco';
+$search = new \Bookscraper\Search\Search($title, $author);
+$resultBundle = $search->lookup($providers);
 
 if (($cheaperResult = $resultBundle->getCheaperResult()) === null) {
-    printf('"%s" can not be found on any search provider.', $title);
+    printf('"%s" could not be found on any search provider.', $title);
 } else {
     printf('"%s" can be found on %s (%s) for R$ %01.2f.',
-        $title, $cheaperResult->getProvider()->getName(),
-        $cheaperResult->getUrl(), $cheaperResult->getPrice());
+    $title, $cheaperResult->getProvider()->getName(),
+    $cheaperResult->getUrl(), $cheaperResult->getPrice());
 }
 ```
 
-To search several titles all at once, use `Bookscraper\Search\SearchBundle`:
+### Multiple titles, multiple providers
 
 ``` php
 <?php
@@ -56,8 +80,9 @@ To search several titles all at once, use `Bookscraper\Search\SearchBundle`:
 require_once 'vendor/autoload.php';
 
 $titles = array(
-    array('A Ausência que Seremos', 'Héctor Abad'), // title/author pair
-    'A Cauda Longa', // just title
+    array('Uma História Íntima da Humanidade', 'Theodore Zeldin'), // Title/author pair
+    array('Não me Faça Pensar'), // Just title
+    'As Brasas', // Just title as string
 );
 
 $providers = array(
@@ -79,11 +104,11 @@ foreach ($resultBundles as $resultBundle) {
     $title = $resultBundle->getSearch()->getTitle();
 
     if (($cheaperResult = $resultBundle->getCheaperResult()) === null) {
-        printf('"%s" can not be found on any search provider.', $title);
+        printf('"%s" could not be found on any search provider.', $title);
     } else {
         printf('"%s" can be found on %s (%s) for R$ %01.2f.',
-            $title, $cheaperResult->getProvider()->getName(),
-            $cheaperResult->getUrl(), $cheaperResult->getPrice());
+        $title, $cheaperResult->getProvider()->getName(),
+        $cheaperResult->getUrl(), $cheaperResult->getPrice());
     }
 
     echo PHP_EOL;

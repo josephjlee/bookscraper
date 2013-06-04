@@ -2,6 +2,8 @@
 
 namespace Bookscraper\Search;
 
+use Bookscraper\Provider\ProviderInterface;
+
 class Result
 {
     /**
@@ -28,11 +30,14 @@ class Result
     /**
      * Public constructor.
      *
+     * @param \Bookscraper\Provider\ProviderInterface $provider
      * @param float|null $price
      * @param string|null $url
      */
-    public function __construct($price = null, $url = null)
-    {
+    public function __construct(
+        ProviderInterface $provider, $price = null, $url = null
+    ) {
+        $this->_provider = $provider;
         $this->_price = $price;
         $this->_url = $url;
     }
@@ -98,20 +103,6 @@ class Result
     public function setPrice($price)
     {
         $this->_price = $price;
-
-        return $this;
-    }
-
-    /**
-     * Sets provider used in the search.
-     *
-     * @param  \Bookscraper\Provider\ProviderInterface $provider
-     * @return Result
-     */
-    public function setProvider(
-        \Bookscraper\Provider\ProviderInterface $provider
-    ) {
-        $this->_provider = $provider;
 
         return $this;
     }

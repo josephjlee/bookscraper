@@ -26,7 +26,7 @@ class LivrariaDaFolha extends ProviderAbstract
         $uri = sprintf($format, urlencode($title));
         $content = '';
         $crawler = $this->_createCrawler($uri, $content);
-        $result = new \Bookscraper\Search\Result();
+        $result = new \Bookscraper\Search\Result($this);
         $errorMessage = 'Nenhum produto encontrado.';
 
         if (strpos($content, $errorMessage) === false) {

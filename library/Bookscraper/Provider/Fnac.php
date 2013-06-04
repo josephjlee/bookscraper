@@ -16,7 +16,7 @@ class Fnac extends ProviderAbstract
         $uri = sprintf($format, urlencode($search->getTitle()));
         $content = '';
         $crawler = $this->_createCrawler($uri, $content);
-        $result = new \Bookscraper\Search\Result();
+        $result = new \Bookscraper\Search\Result($this);
         $errorMessage = '<strong>0</strong>';
 
         if (strpos($content, $errorMessage) === false) {

@@ -29,7 +29,7 @@ class Lpm extends ProviderAbstract
         $uri = sprintf($format, urlencode($title), urlencode($author));
         $content = '';
         $crawler = $this->_createCrawler($uri, $content);
-        $result = new \Bookscraper\Search\Result();
+        $result = new \Bookscraper\Search\Result($this);
         $errorMessage = 'Nenhum livro foi encontrado';
 
         if (strpos($content, $errorMessage) === false) {
