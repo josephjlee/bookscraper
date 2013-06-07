@@ -7,7 +7,7 @@ abstract class ProviderAbstract implements ProviderInterface
     /**
      * @param  string $uri
      * @param  string|null $content
-     * @param   array $options Dz_Http_Client extra options.
+     * @param  array $options \Dz\Http\Client options.
      * @return \Symfony\Component\DomCrawler\Crawler
      */
     protected function _createCrawler(
