@@ -2,7 +2,7 @@
 
 namespace Bookscraper\Provider;
 
-class LivrariaCultura implements ProviderInterface
+class LivrariaCultura extends ProviderAbstract
 {
     /**
      * Gets provider name.
@@ -20,50 +20,27 @@ class LivrariaCultura implements ProviderInterface
      */
     public function lookup(\Bookscraper\Search\Search $search)
     {
-        // First we need get the OAuth token.
-        $title = $search->getTitle();
-        $baseUri = 'http://www.livrariacultura.com.br';
-        $spyUri = $baseUri . '/Produto/Busca?Buscar=' . urlencode($title);
-        $headers = \Dz\Http\Client::getData($spyUri, array(
-            CURLOPT_HEADER => true,
-            CURLOPT_NOBODY => true,
-        ));
+        $format = 'http://www.livrariacultura.com.br/scripts/busca/busca.asp'
+                . '?avancada=1&titem=1&palavratitulo=%s&modobuscatitulo=pc'
+                . '&palavraautor=%s&modobuscaautor=pc'
+                . '&cidioma=POR&ordem=disponibilidade';
 
-        $matches = array();
+        $uri = sprintf($format, urlencode($search->getTitle()),
+            urlencode($search->getAuthor()));
 
-        preg_match('/LivrariaCulturaOauth=[^;]+/', $headers, $matches);
-
-        // Then we can lookup.
-        $uri = $baseUri . '/Service/Metodos.asmx/InvocarSimples';
-        $headers = array('Cookie: ' . array_pop($matches));
-        $nomeDaClasse = 'LivrariaCultura.Repository.Ecommerce.Buscador,'
-                      . 'LivrariaCultura.Repository.Ecommerce';
-
-        $parametrosDaEntidade = sprintf(
-            '{"Expressao":"%s","Ordem":"RD"}', $title);
-
-        $postFields = http_build_query(array(
-            'NomeDaClasse'         => base64_encode($nomeDaClasse),
-            'NomeDoMetodo'         => base64_encode('Obter'),
-            'ParametrosDaEntidade' => $parametrosDaEntidade,
-        ));
-
-        $extraOptions = array(
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_POST       => true,
-            CURLOPT_POSTFIELDS => $postFields,
-        );
-
-        $data = \Dz\Http\Client::getData($uri, $extraOptions);
-        $jsonData = preg_replace('/^[^\{]+(\{.*\}).*$/', '$1', $data);
-        $json = json_decode($jsonData);
+        $content = '';
+        $crawler = $this->_createCrawler($uri, $content);
         $result = new \Bookscraper\Search\Result($this);
+        $errorMessage = 'nenhum resultado correspondente';
 
-        if ($json->Result !== null && count($json->Result->Resultados) > 0) {
-            $resultado = array_shift($json->Result->Resultados);
+        if (strpos($content, $errorMessage) === false) {
+            $linkSelector = '.listaProduto .img_capa a';
+            $url = $crawler->filter($linkSelector)->link()->getUri();
+            $priceText = $crawler->filter('.listaProduto .preco')->text();
+            $price = $this->_parsePrice($priceText);
 
-            $result->setPrice($resultado->Valor)
-                   ->setUrl($baseUri . $resultado->UrlResenha);
+            $result->setPrice($price)
+                   ->setUrl($url);
         }
 
         return $result;
