@@ -2,31 +2,26 @@
 
 namespace Bookscraper\Provider;
 
+use Bookscraper\Search\Item;
+use Bookscraper\Search\Result;
+
 class LivrariaDaFolha extends ProviderAbstract
 {
     /**
-     * Gets provider name.
-     *
-     * @see    ProviderAbstract::getName()
-     * @return string
+     * @param  Item $item
+     * @return Result
      */
-    public function getName()
+    public function lookup(Item $item)
     {
-        return 'Livraria da Folha';
-    }
+        $format = 'http://livraria.folha.com.br/busca'
+                . '?availability=yes&author=%s&q=%s';
 
-    /**
-     * @param  \Bookscraper\Search\Search $search
-     * @return \Bookscraper\Search\Result
-     */
-    public function lookup(\Bookscraper\Search\Search $search)
-    {
-        $format = 'http://livraria.folha.com.br/busca?q=%s';
-        $title = utf8_decode($search->getTitle());
-        $uri = sprintf($format, urlencode($title));
+        $title = utf8_decode($item->getTitle());
+        $author = utf8_decode($item->getAuthor());
+        $uri = sprintf($format, urlencode($author), urlencode($title));
         $content = '';
         $crawler = $this->_createCrawler($uri, $content);
-        $result = new \Bookscraper\Search\Result($this);
+        $result = new Result();
         $errorMessage = 'Nenhum produto encontrado.';
 
         if (strpos($content, $errorMessage) === false) {

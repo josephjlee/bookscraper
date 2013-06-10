@@ -2,34 +2,26 @@
 
 namespace Bookscraper\Provider;
 
+use Bookscraper\Search\Item;
+use Bookscraper\Search\Result;
+
 class Lpm extends ProviderAbstract
 {
     /**
-     * Gets provider name.
-     *
-     * @see    ProviderAbstract::getName()
-     * @return string
+     * @param  Item $item
+     * @return Result
      */
-    public function getName()
-    {
-        return 'L&PM';
-    }
-
-    /**
-     * @param  \Bookscraper\Search\Search $search
-     * @return \Bookscraper\Search\Result
-     */
-    public function lookup(\Bookscraper\Search\Search $search)
+    public function lookup(Item $item)
     {
         $format = 'http://www.lpm.com.br/livros/layout_buscaprodutos.asp'
                 . '?Tipo=Livros&FiltroTitulo=%s&FiltroAutor=%s';
 
-        $title = utf8_decode($search->getTitle());
-        $author = utf8_decode($search->getAuthor());
+        $title = utf8_decode($item->getTitle());
+        $author = utf8_decode($item->getAuthor());
         $uri = sprintf($format, urlencode($title), urlencode($author));
         $content = '';
         $crawler = $this->_createCrawler($uri, $content);
-        $result = new \Bookscraper\Search\Result($this);
+        $result = new Result();
         $errorMessage = 'Nenhum livro foi encontrado';
 
         if (strpos($content, $errorMessage) === false) {

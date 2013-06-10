@@ -2,30 +2,22 @@
 
 namespace Bookscraper\Provider;
 
+use Bookscraper\Search\Item;
+use Bookscraper\Search\Result;
+
 class Americanas extends ProviderAbstract
 {
     /**
-     * Gets provider name.
-     *
-     * @see    ProviderAbstract::getName()
-     * @return string
+     * @param  Item $item
+     * @return Result
      */
-    public function getName()
-    {
-        return 'Americanas.com';
-    }
-
-    /**
-     * @param  \Bookscraper\Search\Search $search
-     * @return \Bookscraper\Search\Result
-     */
-    public function lookup(\Bookscraper\Search\Search $search)
+    public function lookup(Item $item)
     {
         $format = 'http://busca.americanas.com.br/busca.php?q=%s&cat=9';
-        $uri = sprintf($format, urlencode($search->getTitle()));
+        $uri = sprintf($format, urlencode($item->getTitle()));
         $content = '';
         $crawler = $this->_createCrawler($uri, $content);
-        $result = new \Bookscraper\Search\Result($this);
+        $result = new Result();
         $errorMessages = array(
             'Nenhum resultado encontrado para sua consulta',
             'não retornou nenhum resultado',
@@ -38,6 +30,7 @@ class Americanas extends ProviderAbstract
         }
 
         $url = $crawler->filter('.list .url')->link()->getUri();
+        $url = preg_replace('/^.*link=([^&]+).*$/', '$1', $url);
         $crawler = $this->_createCrawler($url, $content);
         $priceText = $crawler->filter('strong .price')->text();
         $price = $this->_parsePrice($priceText);

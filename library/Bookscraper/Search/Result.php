@@ -3,9 +3,17 @@
 namespace Bookscraper\Search;
 
 use Bookscraper\Provider\ProviderInterface;
+use Bookscraper\Search\Item;
 
 class Result
 {
+    /**
+     * Search item.
+     *
+     * @var Item
+     */
+    protected $_item;
+
     /**
      * Product price.
      *
@@ -16,7 +24,7 @@ class Result
     /**
      * Provider used in the search.
      *
-     * @var \Bookscraper\Provider\ProviderInterface
+     * @var ProviderInterface
      */
     protected $_provider;
 
@@ -28,18 +36,13 @@ class Result
     protected $_url;
 
     /**
-     * Public constructor.
+     * Gets search item.
      *
-     * @param \Bookscraper\Provider\ProviderInterface $provider
-     * @param float|null $price
-     * @param string|null $url
+     * @return Item
      */
-    public function __construct(
-        ProviderInterface $provider, $price = null, $url = null
-    ) {
-        $this->_provider = $provider;
-        $this->_price = $price;
-        $this->_url = $url;
+    public function getItem()
+    {
+        return $this->_item;
     }
 
     /**
@@ -55,7 +58,7 @@ class Result
     /**
      * Gets provider used in the search.
      *
-     * @return \Bookscraper\Provider\ProviderInterface
+     * @return ProviderInterface
      */
     public function getProvider()
     {
@@ -95,6 +98,19 @@ class Result
     }
 
     /**
+     * Sets search item.
+     *
+     * @param  Item $item
+     * @return Result
+     */
+    public function setItem(Item $item)
+    {
+        $this->_item = $item;
+
+        return $this;
+    }
+
+    /**
      * Sets product price.
      *
      * @param  float|null $price
@@ -103,6 +119,19 @@ class Result
     public function setPrice($price)
     {
         $this->_price = $price;
+
+        return $this;
+    }
+
+    /**
+     * Sets provider used in the search.
+     *
+     * @param  ProviderInterface $provider
+     * @return Result
+     */
+    public function setProvider(ProviderInterface $provider)
+    {
+        $this->_provider = $provider;
 
         return $this;
     }

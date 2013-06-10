@@ -13,7 +13,13 @@ abstract class ProviderAbstract implements ProviderInterface
     protected function _createCrawler(
         $uri, &$contentReference = null, array $options = array()
     ) {
-        $content = \Dz\Http\Client::getData($uri, $options);
+        $cacheDirectory = 'data/cache/';
+        $cacheDriver = new \Bookscraper\Cache\Driver\File($cacheDirectory);
+        $key = base64_encode($uri);
+        $content = $cacheDriver->get($key, function () use ($uri, $options) {
+            return \Dz\Http\Client::getData($uri, $options);
+        });
+
         $crawler = new \Symfony\Component\DomCrawler\Crawler(null, $uri);
 
         $crawler->addContent($content, 'text/html');
@@ -34,17 +40,5 @@ abstract class ProviderAbstract implements ProviderInterface
         $price = preg_replace('/^\D*(\d+)[\.,](\d+)$/', '$1.$2', $priceText);
 
         return (float) $price;
-    }
-
-    /**
-     * Gets provider name.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        $className = get_class($this);
-
-        return preg_replace('/^.*\\\/', '', $className);
     }
 }

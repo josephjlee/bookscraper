@@ -2,13 +2,15 @@
 
 namespace Bookscraper\Search;
 
+use Bookscraper\Search\Result;
+
 class ResultBundle
 {
     /**
      * Cheaper result.
      * Used for comparison purposes.
      *
-     * @var \Bookscraper\Search\Result
+     * @var Result
      */
     protected $_cheaperResult;
 
@@ -20,29 +22,12 @@ class ResultBundle
     protected $_results;
 
     /**
-     * Search object.
-     *
-     * @var \Bookscraper\Search\Search
-     */
-    protected $_search;
-
-    /**
-     * Public constructor.
-     *
-     * @param \Bookscraper\Search\Search $search
-     */
-    public function __construct(\Bookscraper\Search\Search $search)
-    {
-        $this->_search = $search;
-    }
-
-    /**
      * Adds result to the bundle.
      *
-     * @param  \Bookscraper\Search\Result $result
+     * @param  Result $result
      * @return ResultBundle
      */
-    public function addResult(\Bookscraper\Search\Result $result)
+    public function addResult(Result $result)
     {
         $this->_results[] = $result;
 
@@ -56,7 +41,7 @@ class ResultBundle
     /**
      * Gets cheaper result.
      *
-     * @return \Bookscraper\Search\Result
+     * @return Result
      */
     public function getCheaperResult()
     {
@@ -71,15 +56,5 @@ class ResultBundle
     public function getResults()
     {
         return $this->_results;
-    }
-
-    /**
-     * Gets search object.
-     *
-     * @return \Bookscraper\Search\Search
-     */
-    public function getSearch()
-    {
-        return $this->_search;
     }
 }

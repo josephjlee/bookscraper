@@ -2,93 +2,67 @@
 
 namespace Bookscraper\Search;
 
+use Bookscraper\Cache\Driver\DriverInterface;
+use Bookscraper\Search\Item;
+use Bookscraper\Provider\ProviderInterface;
+
 class Search
 {
     /**
-     * Author name.
+     * Cache driver.
      *
-     * @var string
+     * @var DriverInterface
      */
-    protected $_author;
+    protected $_cacheDriver;
 
     /**
-     * Book title.
+     * Public constructor.
      *
-     * @var string
+     * @param DriverInterface $cacheDriver
      */
-    protected $_title;
-
-    /**
-     * @param string $title
-     * @param string $author
-
-     */
-    public function __construct($title, $author = null)
+    public function __construct(DriverInterface $cacheDriver = null)
     {
-        $this->_title = $title;
-        $this->_author = $author;
+        $this->_cacheDriver = $cacheDriver;
     }
 
     /**
-     * Gets author name.
+     * Gets cache driver.
      *
-     * @return string
+     * @return DriverInterface
      */
-    public function getAuthor()
+    public function getCacheDriver()
     {
-        return $this->_author;
+        return $this->_cacheDriver;
     }
 
-    /**
-     * Gets book title.
-     *
-     * @return string
-     */
-    public function getTitle()
+    public function lookup(ProviderInterface $provider, Item $item)
     {
-        return $this->_title;
-    }
+        if ($this->_cacheDriver instanceof DriverInterface) {
+            $key = $item->getKey(get_class($provider));
+            $callback = function () use ($provider, $item) {
+                return $provider->lookup($item);
+            };
 
-    /**
-     * @param  array $providers
-     * @return \Bookscraper\Search\ResultBundle
-     */
-    public function lookup(array $providers)
-    {
-        $resultBundle = new \Bookscraper\Search\ResultBundle($this);
-
-        foreach ($providers as $provider) {
-            /* @var $provider \Bookscraper\Provider\ProviderInterface */
-            $result = $provider->lookup($this);
-
-            $resultBundle->addResult($result);
+            $result = $this->_cacheDriver->get($key, $callback);
+        } else {
+            $result = $provider->lookup($item);
         }
 
-        return $resultBundle;
+        $result->setItem($item)
+               ->setProvider($provider);
+
+        return $result;
     }
 
     /**
-     * Sets author name.
+     * Sets cache driver.
      *
-     * @param  string $author
+     * @param  DriverInterface $cacheDriver
      * @return Search
      */
-    public function setAuthor($author)
+    public function setCacheDriver(DriverInterface $cacheDriver)
     {
-        $this->_author = $author;
-
-        return $this;
-    }
-
-    /**
-     * Sets book title.
-     *
-     * @param  string $title
-     * @return Search
-     */
-    public function setTitle($title)
-    {
-        $this->_title = $title;
+        $this->_cacheDriver = $cacheDriver;
 
         return $this;
     }

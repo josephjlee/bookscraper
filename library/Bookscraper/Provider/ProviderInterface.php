@@ -2,11 +2,14 @@
 
 namespace Bookscraper\Provider;
 
+use Bookscraper\Search\Item;
+use Bookscraper\Search\Result;
+
 interface ProviderInterface
 {
     /**
-     * @param  \Bookscraper\Search\Search $search
-     * @return \Bookscraper\Search\Result
+     * @param  Item $item
+     * @return Result
      */
-    public function lookup(\Bookscraper\Search\Search $search);
+    public function lookup(Item $item);
 }

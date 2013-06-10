@@ -2,35 +2,29 @@
 
 namespace Bookscraper\Provider;
 
+use Bookscraper\Search\Item;
+use Bookscraper\Search\Result;
+
 class LivrariaCultura extends ProviderAbstract
 {
     /**
-     * Gets provider name.
-     *
-     * @return string
+     * @param  Item $item
+     * @return Result
      */
-    public function getName()
-    {
-        return 'Livraria Cultura';
-    }
-
-    /**
-     * @param  \Bookscraper\Search\Search $search
-     * @return \Bookscraper\Search\Result
-     */
-    public function lookup(\Bookscraper\Search\Search $search)
+    public function lookup(Item $item)
     {
         $format = 'http://www.livrariacultura.com.br/scripts/busca/busca.asp'
                 . '?avancada=1&titem=1&palavratitulo=%s&modobuscatitulo=pc'
                 . '&palavraautor=%s&modobuscaautor=pc'
                 . '&cidioma=POR&ordem=disponibilidade';
 
-        $uri = sprintf($format, urlencode($search->getTitle()),
-            urlencode($search->getAuthor()));
-
+        $forbiddenChars = array('#', '&', '(', ')', '*', '\'', '"', '-', '_');
+        $title = str_replace($forbiddenChars, '', $item->getTitle());
+        $author = str_replace($forbiddenChars, '', $item->getAuthor());
+        $uri = sprintf($format, urlencode($title), urlencode($author));
         $content = '';
         $crawler = $this->_createCrawler($uri, $content);
-        $result = new \Bookscraper\Search\Result($this);
+        $result = new Result();
         $errorMessage = 'nenhum resultado correspondente';
 
         if (strpos($content, $errorMessage) === false) {
