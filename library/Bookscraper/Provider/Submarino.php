@@ -2,6 +2,7 @@
 
 namespace Bookscraper\Provider;
 
+use Bookscraper\Search\CrawlerFactory;
 use Bookscraper\Search\Item;
 use Bookscraper\Search\Result;
 
@@ -9,34 +10,32 @@ class Submarino extends ProviderAbstract
 {
     /**
      * @param  Item $item
+     * @param  CrawlerFactory $crawlerFactory
      * @return Result
      */
-    public function lookup(Item $item)
+    public function lookup(Item $item, CrawlerFactory $crawlerFactory)
     {
+        $result = new Result();
         $format = 'http://busca.submarino.com.br/busca.php?q=%s&cat=460';
         $uri = sprintf($format, urlencode($item->getTitle()));
-        $content = '';
-        $crawler = $this->_createCrawler($uri, $content);
-        $result = new Result();
-        $errorMessages = array(
+        $falseAlarms = array(
             'Desculpe, no momento não temos  esse produto',
             'não encontrou nenhum resultado',
         );
 
-        foreach ($errorMessages as $errorMessage) {
-            if (strpos($content, $errorMessage) !== false) {
-                return $result;
+        if (($crawler = $crawlerFactory->create($uri, $falseAlarms)) !== null) {
+            $url = $crawler->filter('.list .url')->link()->getUri();
+            $url = preg_replace('/^.*link=([^&]+).*$/', '$1', $url);
+            $falseAlarm = 'Ops, já vendemos todo o estoque!';
+
+            if (($crawler = $crawlerFactory->create($url, $falseAlarm)) !== null) {
+                $priceText = $crawler->filter('strong .amount')->text();
+                $price = $this->_parsePrice($priceText);
+
+                $result->setPrice($price)
+                       ->setUrl($url);
             }
         }
-
-        $url = $crawler->filter('.list .url')->link()->getUri();
-        $url = preg_replace('/^.*link=([^&]+).*$/', '$1', $url);
-        $crawler = $this->_createCrawler($url, $content);
-        $priceText = $crawler->filter('strong .amount')->text();
-        $price = $this->_parsePrice($priceText);
-
-        $result->setPrice($price)
-               ->setUrl($url);
 
         return $result;
     }

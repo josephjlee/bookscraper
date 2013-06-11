@@ -2,6 +2,7 @@
 
 namespace Bookscraper\Provider;
 
+use Bookscraper\Search\CrawlerFactory;
 use Bookscraper\Search\Item;
 use Bookscraper\Search\Result;
 
@@ -9,21 +10,20 @@ class Saraiva extends ProviderAbstract
 {
     /**
      * @param  Item $item
+     * @param  CrawlerFactory $crawlerFactory
      * @return Result
      */
-    public function lookup(Item $item)
+    public function lookup(Item $item, CrawlerFactory $crawlerFactory)
     {
+        $result = new Result();
         $format = 'http://busca.livrariasaraiva.com.br/'
                 . 'search?w=%s&af=cat1%%3alivros';
 
         $uri = sprintf($format, urlencode($item->getTitle()));
-        $content = '';
-        $crawler = $this->_createCrawler($uri, $content);
-        $result = new Result();
-        $errorMessage = 'N&atilde;o foram encontrados resultados para '
-                      . 'todas as palavras da sua pesquisa.';
+        $falseAlarm = 'N&atilde;o foram encontrados resultados para '
+                    . 'todas as palavras da sua pesquisa.';
 
-        if (strpos($content, $errorMessage) === false) {
+        if (($crawler = $crawlerFactory->create($uri, $falseAlarm)) !== null) {
             $url = $crawler->filter('.sli_grid_result > a')->link()->getUri();
             $url = urldecode(preg_replace('/^.*url=([^&]+).*$/', '$1', $url));
             $priceText = $crawler->filter('.precoPor')->text();

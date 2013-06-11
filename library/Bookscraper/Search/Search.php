@@ -2,68 +2,37 @@
 
 namespace Bookscraper\Search;
 
-use Bookscraper\Cache\Driver\DriverInterface;
+use Bookscraper\Search\CrawlerFactory;
 use Bookscraper\Search\Item;
 use Bookscraper\Provider\ProviderInterface;
 
 class Search
 {
     /**
-     * Cache driver.
+     * Crawler factory.
      *
-     * @var DriverInterface
+     * @var CrawlerFactory
      */
-    protected $_cacheDriver;
+    protected $_crawlerFactory;
 
     /**
      * Public constructor.
-     *
-     * @param DriverInterface $cacheDriver
      */
-    public function __construct(DriverInterface $cacheDriver = null)
+    public function __construct(CrawlerFactory $crawlerFactory)
     {
-        $this->_cacheDriver = $cacheDriver;
-    }
-
-    /**
-     * Gets cache driver.
-     *
-     * @return DriverInterface
-     */
-    public function getCacheDriver()
-    {
-        return $this->_cacheDriver;
+        $this->_crawlerFactory = $crawlerFactory;
     }
 
     public function lookup(ProviderInterface $provider, Item $item)
     {
-        if ($this->_cacheDriver instanceof DriverInterface) {
-            $key = $item->getKey(get_class($provider));
-            $callback = function () use ($provider, $item) {
-                return $provider->lookup($item);
-            };
+        try {
+            return $provider->lookup($item, $this->_crawlerFactory)
+                            ->setItem($item)
+                            ->setProvider($provider);
+        } catch (\Exception $exception) {
+            echo $item->getTitle() . ' @ ' . get_class($provider), PHP_EOL;
 
-            $result = $this->_cacheDriver->get($key, $callback);
-        } else {
-            $result = $provider->lookup($item);
+            return null;
         }
-
-        $result->setItem($item)
-               ->setProvider($provider);
-
-        return $result;
-    }
-
-    /**
-     * Sets cache driver.
-     *
-     * @param  DriverInterface $cacheDriver
-     * @return Search
-     */
-    public function setCacheDriver(DriverInterface $cacheDriver)
-    {
-        $this->_cacheDriver = $cacheDriver;
-
-        return $this;
     }
 }
