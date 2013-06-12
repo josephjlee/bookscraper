@@ -24,13 +24,22 @@ class Saraiva extends ProviderAbstract
                     . 'todas as palavras da sua pesquisa.';
 
         if (($crawler = $crawlerFactory->create($uri, $falseAlarm)) !== null) {
-            $url = $crawler->filter('.sli_grid_result > a')->link()->getUri();
-            $url = urldecode(preg_replace('/^.*url=([^&]+).*$/', '$1', $url));
-            $priceText = $crawler->filter('.precoPor')->text();
-            $price = $this->_parsePrice($priceText);
+            /* @var $crawler \Symfony\Component\DomCrawler\Crawler */
 
-            $result->setPrice($price)
-                   ->setUrl($url);
+            // @TODO Use $node to filter like this.
+            $crawler = $crawler->filter('.sli_grid_result')->eq(0);
+            $falseAlarmSelector = 'img[src="http://www.livrariasaraiva.com.br'
+                                . '/imgc/botoes/btn_avise.jpg"]';
+
+            if (count($crawler->filter($falseAlarmSelector)) === 0) {
+                $url = $crawler->filter('a')->link()->getUri();
+                $url = urldecode(preg_replace('/^.*url=([^&]+).*$/', '$1', $url));
+                $priceText = $crawler->filter('.precoPor')->text();
+                $price = $this->_parsePrice($priceText);
+
+                $result->setPrice($price)
+                       ->setUrl($url);
+            }
         }
 
         return $result;

@@ -19,7 +19,8 @@ class Fnac extends ProviderAbstract
         $format = 'http://busca.fnac.com.br/'
                 . '?busca=%s&filtro=product_type%%3ALivro';
 
-        $uri = sprintf($format, urlencode($item->getTitle()));
+        $query = $item->getAuthor() . ' ' . $item->getTitle();
+        $uri = sprintf($format, urlencode($query));
         $falseAlarm = '<strong>0</strong>';
 
         if (($crawler = $crawlerFactory->create($uri, $falseAlarm)) !== null) {

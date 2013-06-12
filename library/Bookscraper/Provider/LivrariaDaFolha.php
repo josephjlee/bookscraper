@@ -27,10 +27,13 @@ class LivrariaDaFolha extends ProviderAbstract
         if (($crawler = $crawlerFactory->create($uri, $falseAlarm)) !== null) {
             $url = $crawler->filter('.title a')->link()->getUri();
             $priceText = $crawler->filter('.redPrice')->text();
-            $price = $this->_parsePrice($priceText);
 
-            $result->setPrice($price)
-                   ->setUrl($url);
+            if ($priceText !== 'Esgotado') {
+                $price = $this->_parsePrice($priceText);
+
+                $result->setPrice($price)
+                       ->setUrl($url);
+            }
         }
 
         return $result;

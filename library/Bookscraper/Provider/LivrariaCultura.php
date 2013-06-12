@@ -31,10 +31,13 @@ class LivrariaCultura extends ProviderAbstract
             $linkSelector = '.listaProduto .img_capa a';
             $url = $crawler->filter($linkSelector)->link()->getUri();
             $priceText = $crawler->filter('.listaProduto .preco')->text();
-            $price = $this->_parsePrice($priceText);
 
-            $result->setPrice($price)
-                   ->setUrl($url);
+            if ($priceText !== 'Esgotado no Fornecedor') {
+                $price = $this->_parsePrice($priceText);
+
+                $result->setPrice($price)
+                       ->setUrl($url);
+            }
         }
 
         return $result;

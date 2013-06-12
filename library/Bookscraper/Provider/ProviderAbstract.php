@@ -10,7 +10,7 @@ abstract class ProviderAbstract implements ProviderInterface
      */
     protected function _parsePrice($priceText)
     {
-        $price = preg_replace('/^\D*(\d+)[\.,](\d+)$/', '$1.$2', $priceText);
+        $price = preg_replace('/^\D*(\d+)[\.,](\d+)\D*$/', '$1.$2', $priceText);
 
         return (float) $price;
     }

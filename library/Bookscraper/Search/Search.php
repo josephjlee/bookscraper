@@ -30,8 +30,6 @@ class Search
                             ->setItem($item)
                             ->setProvider($provider);
         } catch (\Exception $exception) {
-            echo $item->getTitle() . ' @ ' . get_class($provider), PHP_EOL;
-
             return null;
         }
     }
