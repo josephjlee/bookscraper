@@ -19,7 +19,8 @@ class Saraiva extends ProviderAbstract
         $format = 'http://busca.livrariasaraiva.com.br/'
                 . 'search?w=%s&af=cat1%%3alivros';
 
-        $uri = sprintf($format, urlencode($item->getTitle()));
+        $query = $item->getAuthor() . ' ' . $item->getTitle();
+        $uri = sprintf($format, urlencode($query));
         $falseAlarm = 'N&atilde;o foram encontrados resultados para '
                     . 'todas as palavras da sua pesquisa.';
 

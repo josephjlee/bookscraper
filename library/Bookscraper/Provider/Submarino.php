@@ -17,7 +17,8 @@ class Submarino extends ProviderAbstract
     {
         $result = new Result();
         $format = 'http://busca.submarino.com.br/busca.php?q=%s&cat=460';
-        $uri = sprintf($format, urlencode($item->getTitle()));
+        $query = $item->getAuthor() . ' ' . $item->getTitle();
+        $uri = sprintf($format, urlencode($query));
         $falseAlarms = array(
             'Desculpe, no momento não temos  esse produto',
             'não encontrou nenhum resultado',

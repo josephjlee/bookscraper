@@ -16,7 +16,8 @@ class CiaDosLivros extends ProviderAbstract
     public function lookup(Item $item, CrawlerFactory $crawlerFactory)
     {
         $result = new Result();
-        $format = 'http://www.ciadoslivros.com.br/pesquisa/?p=%s';
+        $baseUrl = 'http://www.ciadoslivros.com.br/pesquisa/';
+        $format = $baseUrl . '?p=%s';
         $query = $item->getAuthor() . ' ' . $item->getTitle();
         $uri = sprintf($format, urlencode($query));
         $falseAlarms = array(
@@ -25,10 +26,11 @@ class CiaDosLivros extends ProviderAbstract
         );
 
         if (($crawler = $crawlerFactory->create($uri, $falseAlarms)) !== null) {
+            // Check for redirects.
             $url = $crawler->filter('link[rel=canonical]')->attr('href');
+            $searchPattern = '/^' . preg_quote($baseUrl, '/') . '/';
 
-            // No redirection?
-            if ($url === $uri) {
+            if (preg_match($searchPattern, $url) > 0) {
                 $url = $crawler->filter('h3 a')->link()->getUri();
             }
 
