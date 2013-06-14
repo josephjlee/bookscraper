@@ -1,9 +1,49 @@
 <?php
+/**
+ * Bookscraper
+ *
+ * @copyright Copyright (c) 2013 LF Bittencourt (http://www.lfbittencourt.com)
+ */
 
 namespace Bookscraper\Search;
 
 use Bookscraper\Search\Result;
 
+/**
+ * Result bundle class.
+ *
+ * Use result bundles to compare two or more search results, e.g.:
+ *
+ * <code>
+ * use Bookscraper\Provider;
+ * use Bookscraper\Search\CrawlerFactory;
+ * use Bookscraper\Search\Item;
+ * use Bookscraper\Search\ResultBundle;
+ *
+ * require_once 'vendor/autoload.php';
+ *
+ * $crawlerFactory = new CrawlerFactory();
+ * $americanas = new Provider\Americanas();
+ * $ciaDosLivros = new Provider\CiaDosLivros();
+ * $item = new Item('Lolita', 'Vladimir Nabokov');
+ * $resultBundle = new ResultBundle();
+ *
+ * $resultBundle->addResult($americanas->lookup($item, $crawlerFactory))
+ *              ->addResult($ciaDosLivros->lookup($item, $crawlerFactory));
+ *
+ * $cheaperResult = $resultBundle->getCheaperResult();
+ *
+ * if ($cheaperResult->isNotEmpty()) {
+ *     printf('Item found on %s for R$ %01.2f.',
+ *     $cheaperResult->getUrl(), $cheaperResult->getPrice());
+ * } else {
+ *     echo 'Item not found.';
+ * }
+ * </code>
+ *
+ * @copyright Copyright (c) 2013 LF Bittencourt (http://www.lfbittencourt.com)
+ * @author    LF Bittencourt <lf@lfbittencourt.com>
+ */
 class ResultBundle
 {
     /**
@@ -12,14 +52,14 @@ class ResultBundle
      *
      * @var Result
      */
-    protected $_cheaperResult;
+    protected $cheaperResult;
 
     /**
      * Results bundle.
      *
      * @var array
      */
-    protected $_results;
+    protected $results;
 
     /**
      * Adds result to the bundle.
@@ -29,10 +69,10 @@ class ResultBundle
      */
     public function addResult(Result $result)
     {
-        $this->_results[] = $result;
+        $this->results[] = $result;
 
-        if ($result->isCheaperThan($this->_cheaperResult)) {
-            $this->_cheaperResult = $result;
+        if ($result->isCheaperThan($this->cheaperResult)) {
+            $this->cheaperResult = $result;
         }
 
         return $this;
@@ -45,7 +85,7 @@ class ResultBundle
      */
     public function getCheaperResult()
     {
-        return $this->_cheaperResult;
+        return $this->cheaperResult;
     }
 
     /**
@@ -55,6 +95,6 @@ class ResultBundle
      */
     public function getResults()
     {
-        return $this->_results;
+        return $this->results;
     }
 }

@@ -1,7 +1,18 @@
 <?php
+/**
+ * Bookscraper
+ *
+ * @copyright Copyright (c) 2013 LF Bittencourt (http://www.lfbittencourt.com)
+ */
 
 namespace Bookscraper\Search;
 
+/**
+ * Search item class.
+ *
+ * @copyright Copyright (c) 2013 LF Bittencourt (http://www.lfbittencourt.com)
+ * @author    LF Bittencourt <lf@lfbittencourt.com>
+ */
 class Item
 {
     /**
@@ -9,23 +20,25 @@ class Item
      *
      * @var string
      */
-    protected $_author;
+    protected $author;
 
     /**
      * Book title.
      *
      * @var string
      */
-    protected $_title;
+    protected $title;
 
     /**
+     * Public constructor.
+     *
      * @param string $title
      * @param string $author
      */
     public function __construct($title, $author = null)
     {
-        $this->_title = $title;
-        $this->_author = $author;
+        $this->title = $title;
+        $this->author = $author;
     }
 
     /**
@@ -35,18 +48,7 @@ class Item
      */
     public function getAuthor()
     {
-        return $this->_author;
-    }
-
-    /**
-     * Gets item identifier key for caching purposes.
-     *
-     * @param  string $suffix
-     * @return string
-     */
-    public function getKey($suffix = '')
-    {
-        return base64_encode($this->_title . $this->_author . $suffix);
+        return $this->author;
     }
 
     /**
@@ -56,7 +58,7 @@ class Item
      */
     public function getTitle()
     {
-        return $this->_title;
+        return $this->title;
     }
 
     /**
@@ -67,7 +69,7 @@ class Item
      */
     public function setAuthor($author)
     {
-        $this->_author = $author;
+        $this->author = $author;
 
         return $this;
     }
@@ -80,7 +82,7 @@ class Item
      */
     public function setTitle($title)
     {
-        $this->_title = $title;
+        $this->title = $title;
 
         return $this;
     }

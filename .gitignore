@@ -8,6 +8,9 @@ vendor
 .project
 .settings
 
+# phpDocumentor 2
+docs
+
 # Vagrant
 .vagrant
 Vagrantfile

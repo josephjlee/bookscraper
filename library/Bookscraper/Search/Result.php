@@ -1,10 +1,21 @@
 <?php
+/**
+ * Bookscraper
+ *
+ * @copyright Copyright (c) 2013 LF Bittencourt (http://www.lfbittencourt.com)
+ */
 
 namespace Bookscraper\Search;
 
 use Bookscraper\Provider\ProviderInterface;
 use Bookscraper\Search\Item;
 
+/**
+ * Search result class.
+ *
+ * @copyright Copyright (c) 2013 LF Bittencourt (http://www.lfbittencourt.com)
+ * @author    LF Bittencourt <lf@lfbittencourt.com>
+ */
 class Result
 {
     /**
@@ -12,28 +23,28 @@ class Result
      *
      * @var Item
      */
-    protected $_item;
+    protected $item;
 
     /**
      * Product price.
      *
      * @var float
      */
-    protected $_price;
+    protected $price;
 
     /**
      * Provider used in the search.
      *
      * @var ProviderInterface
      */
-    protected $_provider;
+    protected $provider;
 
     /**
      * Product URL.
      *
      * @var string
      */
-    protected $_url;
+    protected $url;
 
     /**
      * Gets search item.
@@ -42,7 +53,7 @@ class Result
      */
     public function getItem()
     {
-        return $this->_item;
+        return $this->item;
     }
 
     /**
@@ -52,7 +63,7 @@ class Result
      */
     public function getPrice()
     {
-        return $this->_price;
+        return $this->price;
     }
 
     /**
@@ -62,7 +73,7 @@ class Result
      */
     public function getProvider()
     {
-        return $this->_provider;
+        return $this->provider;
     }
 
     /**
@@ -72,7 +83,7 @@ class Result
      */
     public function getUrl()
     {
-        return $this->_url;
+        return $this->url;
     }
 
     /**
@@ -94,7 +105,7 @@ class Result
      */
     public function isNotEmpty()
     {
-        return $this->_price !== null && $this->_url !== null;
+        return $this->price !== null && $this->url !== null;
     }
 
     /**
@@ -105,7 +116,7 @@ class Result
      */
     public function setItem(Item $item)
     {
-        $this->_item = $item;
+        $this->item = $item;
 
         return $this;
     }
@@ -118,7 +129,7 @@ class Result
      */
     public function setPrice($price)
     {
-        $this->_price = $price;
+        $this->price = $price;
 
         return $this;
     }
@@ -131,7 +142,7 @@ class Result
      */
     public function setProvider(ProviderInterface $provider)
     {
-        $this->_provider = $provider;
+        $this->provider = $provider;
 
         return $this;
     }
@@ -144,7 +155,7 @@ class Result
      */
     public function setUrl($url)
     {
-        $this->_url = $url;
+        $this->url = $url;
 
         return $this;
     }

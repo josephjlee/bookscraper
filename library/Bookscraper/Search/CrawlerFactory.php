@@ -1,4 +1,9 @@
 <?php
+/**
+ * Bookscraper
+ *
+ * @copyright Copyright (c) 2013 LF Bittencourt (http://www.lfbittencourt.com)
+ */
 
 namespace Bookscraper\Search;
 
@@ -6,6 +11,12 @@ use Bookscraper\Cache\Driver\DriverInterface;
 use Dz\Http\Client;
 use Symfony\Component\DomCrawler\Crawler;
 
+/**
+ * Crawler factory with cache support.
+ *
+ * @copyright Copyright (c) 2013 LF Bittencourt (http://www.lfbittencourt.com)
+ * @author    LF Bittencourt <lf@lfbittencourt.com>
+ */
 class CrawlerFactory
 {
     /**
@@ -13,14 +24,16 @@ class CrawlerFactory
      *
      * @var DriverInterface
      */
-    protected $_cacheDriver;
+    protected $cacheDriver;
 
     /**
      * Public constructor.
+     *
+     * @param DriverInterface|null $cacheDriver
      */
     public function __construct(DriverInterface $cacheDriver = null)
     {
-        $this->_cacheDriver = $cacheDriver;
+        $this->cacheDriver = $cacheDriver;
     }
 
     /**
@@ -32,16 +45,18 @@ class CrawlerFactory
      * @return Crawler|null Returns null only if a false alarm is found.
      */
     public function create(
-        $uri, $falseAlarms = array(), array $options = array()
+        $uri,
+        $falseAlarms = array(),
+        array $options = array()
     ) {
         $crawler = new Crawler(null, $uri);
         $callback = function () use ($uri, $options) {
             return Client::getData($uri, $options);
         };
 
-        if ($this->_cacheDriver instanceof DriverInterface) {
+        if ($this->cacheDriver instanceof DriverInterface) {
             $key = base64_encode($uri . serialize($options));
-            $content = $this->_cacheDriver->get($key, $callback);
+            $content = $this->cacheDriver->get($key, $callback);
         } else {
             $content = $callback();
         }
@@ -68,7 +83,7 @@ class CrawlerFactory
      */
     public function getCacheDriver()
     {
-        return $this->_cacheDriver;
+        return $this->cacheDriver;
     }
 
     /**
@@ -79,7 +94,7 @@ class CrawlerFactory
      */
     public function setCacheDriver(DriverInterface $cacheDriver)
     {
-        $this->_cacheDriver = $cacheDriver;
+        $this->cacheDriver = $cacheDriver;
 
         return $this;
     }
