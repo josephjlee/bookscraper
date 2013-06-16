@@ -38,7 +38,7 @@ if ($result->isNotEmpty()) {
 }
 ```
 
-To increase performance, you can attach a cache driver to the CrawlerFactory HTTP client:
+To increase performance, you can attach a cache driver to the `CrawlerFactory` HTTP client:
 
 ``` php
 
