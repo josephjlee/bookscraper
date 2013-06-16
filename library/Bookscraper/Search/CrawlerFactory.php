@@ -7,7 +7,6 @@
 
 namespace Bookscraper\Search;
 
-use Bookscraper\Cache\Driver\DriverInterface;
 use Dz\Http\Client;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -20,20 +19,20 @@ use Symfony\Component\DomCrawler\Crawler;
 class CrawlerFactory
 {
     /**
-     * Cache driver.
+     * HTTP client.
      *
-     * @var DriverInterface
+     * @var Client
      */
-    protected $cacheDriver;
+    protected $httpClient;
 
     /**
      * Public constructor.
      *
-     * @param DriverInterface|null $cacheDriver
+     * @param Client|null $httpClient
      */
-    public function __construct(DriverInterface $cacheDriver = null)
+    public function __construct(Client $httpClient = null)
     {
-        $this->cacheDriver = $cacheDriver;
+        $this->httpClient = $httpClient ?: new Client();
     }
 
     /**
@@ -49,17 +48,7 @@ class CrawlerFactory
         $falseAlarms = array(),
         array $options = array()
     ) {
-        $crawler = new Crawler(null, $uri);
-        $callback = function () use ($uri, $options) {
-            return Client::getData($uri, $options);
-        };
-
-        if ($this->cacheDriver instanceof DriverInterface) {
-            $key = base64_encode($uri . serialize($options));
-            $content = $this->cacheDriver->get($key, $callback);
-        } else {
-            $content = $callback();
-        }
+        $content = $this->httpClient->request($uri, $options);
 
         if (!is_array($falseAlarms)) {
             $falseAlarms = array($falseAlarms);
@@ -71,30 +60,32 @@ class CrawlerFactory
             }
         }
 
+        $crawler = new Crawler(null, $uri);
+
         $crawler->addContent($content, 'text/html');
 
         return $crawler;
     }
 
     /**
-     * Gets cache driver.
+     * Gets HTTP client.
      *
-     * @return DriverInterface
+     * @return Client
      */
-    public function getCacheDriver()
+    public function getHttpClient()
     {
-        return $this->cacheDriver;
+        return $this->httpClient;
     }
 
     /**
-     * Sets cache driver.
+     * Sets HTTP client.
      *
-     * @param  DriverInterface $cacheDriver
+     * @param  Client $httpClient
      * @return Crawler
      */
-    public function setCacheDriver(DriverInterface $cacheDriver)
+    public function setHttpClient(Client $httpClient)
     {
-        $this->cacheDriver = $cacheDriver;
+        $this->httpClient = $httpClient;
 
         return $this;
     }

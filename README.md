@@ -37,3 +37,13 @@ if ($result->isNotEmpty()) {
     echo 'Item not found.';
 }
 ```
+
+To increase performance, you can attach a cache driver to the CrawlerFactory HTTP client:
+
+``` php
+
+$cacheDriver = new \Dz\Cache\Driver\File('/path/to/cache/files');
+
+$crawlerFactory->getHttpClient()
+               ->setCacheDriver($cacheDriver);
+```
