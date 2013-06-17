@@ -12,26 +12,26 @@ use Bookscraper\Search\Item;
 use Bookscraper\Search\Result;
 
 /**
- * Submarino provider.
+ * Extra provider.
  *
  * @copyright Copyright (c) 2013 LF Bittencourt (http://www.lfbittencourt.com)
  * @author    LF Bittencourt <lf@lfbittencourt.com>
  */
-class Submarino extends ProviderAbstract
+class Extra extends ProviderAbstract
 {
     /**
      * Books category const.
      *
      * @var string
      */
-    const CATEGORY_BOOKS = '460';
+    const CATEGORY_BOOKS = 'livros';
 
     /**
      * Electroportables category const.
      *
      * @var string
      */
-    const CATEGORY_ELECTROPORTABLES = '87';
+    const CATEGORY_ELECTROPORTABLES = 'eletroportateis';
 
     /**
      * Search category.
@@ -60,26 +60,22 @@ class Submarino extends ProviderAbstract
     public function lookup(Item $item, CrawlerFactory $crawlerFactory)
     {
         $result = new Result();
-        $format = 'http://busca.submarino.com.br/busca.php?q=%s';
+        $format = 'http://buscando.extra.com.br/search?w=%s';
 
         if ($this->category !== null) {
-            $format .= '&cat=' . $this->category;
+            $format .= '&af=dept:' . $this->category;
         }
 
         $query = $item->getAuthor() . ' ' . $item->getTitle();
         $uri = sprintf($format, urlencode($query));
-        $falseAlarms = array(
-            'Desculpe, no momento não temos  esse produto',
-            'não encontrou nenhum resultado',
-        );
+        $falseAlarm = 'não encontrou nenhum resultado';
 
-        if (($crawler = $crawlerFactory->create($uri, $falseAlarms)) !== null) {
-            $url = $crawler->filter('.list .url')->link()->getUri();
-            $url = preg_replace('/^.*link=([^&]+).*$/', '$1', $url);
-            $falseAlarm = 'Ops, já vendemos todo o estoque!';
+        if (($crawler = $crawlerFactory->create($uri, $falseAlarm)) !== null) {
+            $url = $crawler->filter('.link')->attr('title');
+            $falseAlarm = 'Produto temporariamente indispon&#237;vel.';
 
             if (($crawler = $crawlerFactory->create($url, $falseAlarm)) !== null) {
-                $priceText = $crawler->filter('strong .amount')->text();
+                $priceText = $crawler->filter('.price')->text();
                 $price = $this->parsePrice($priceText);
 
                 $result->setPrice($price)

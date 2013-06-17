@@ -40,7 +40,7 @@ class CiaDosLivros extends ProviderAbstract
 
         if (($crawler = $crawlerFactory->create($uri, $falseAlarms)) !== null) {
             // Check for redirects.
-            $url = $crawler->filter('link[rel=canonical]')->attr('href');
+            $url = $crawler->filter('link[rel="canonical"]')->attr('href');
             $searchPattern = '/^' . preg_quote($baseUrl, '/') . '/';
 
             if (preg_match($searchPattern, $url) > 0) {

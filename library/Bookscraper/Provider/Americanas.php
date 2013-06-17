@@ -20,6 +20,37 @@ use Bookscraper\Search\Result;
 class Americanas extends ProviderAbstract
 {
     /**
+     * Books category const.
+     *
+     * @var string
+     */
+    const CATEGORY_BOOKS = '9';
+
+    /**
+     * Electroportables category const.
+     *
+     * @var string
+     */
+    const CATEGORY_ELECTROPORTABLES = '1335';
+
+    /**
+     * Search category.
+     *
+     * @var string
+     */
+    protected $category;
+
+    /**
+     * Public constructor.
+     *
+     * @param string $category
+     */
+    public function __construct($category = null)
+    {
+        $this->category = $category;
+    }
+
+    /**
      * Lookup for an item.
      *
      * @param  Item $item
@@ -29,7 +60,12 @@ class Americanas extends ProviderAbstract
     public function lookup(Item $item, CrawlerFactory $crawlerFactory)
     {
         $result = new Result();
-        $format = 'http://busca.americanas.com.br/busca.php?q=%s&cat=9';
+        $format = 'http://busca.americanas.com.br/busca.php?q=%s';
+
+        if ($this->category !== null) {
+            $format .= '&cat=' . $this->category;
+        }
+
         $query = $item->getAuthor() . ' ' . $item->getTitle();
         $uri = sprintf($format, urlencode($query));
         $falseAlarms = array(

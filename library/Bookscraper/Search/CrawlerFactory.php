@@ -48,7 +48,9 @@ class CrawlerFactory
         $falseAlarms = array(),
         array $options = array()
     ) {
-        $content = $this->httpClient->request($uri, $options);
+        if (($content = $this->httpClient->request($uri, $options)) === false) {
+            return null;
+        }
 
         if (!is_array($falseAlarms)) {
             $falseAlarms = array($falseAlarms);
